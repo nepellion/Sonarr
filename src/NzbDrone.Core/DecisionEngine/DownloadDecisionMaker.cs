@@ -110,6 +110,12 @@ namespace NzbDrone.Core.DecisionEngine
                         {
                             decision = new DownloadDecision(remoteEpisode, new DownloadRejection(DownloadRejectionReason.UnknownEpisode, "Unable to identify correct episode(s) using release name and scene mappings"));
                         }
+                        else if (remoteEpisode.ReleaseSource == ReleaseSourceType.Rss && !remoteEpisode.IsRecentEpisode())
+                        {
+                            decision = new DownloadDecision(remoteEpisode,
+                                new DownloadRejection(DownloadRejectionReason.Blocklisted,
+                                    "Episode came from RSS but is not recent, skipping automatic download."));
+                        }
                         else
                         {
                             _aggregationService.Augment(remoteEpisode);
